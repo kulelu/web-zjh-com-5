@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://kulelu.github.io/web-zjh-com-5/sitemap.xml

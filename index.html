@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>炸金花 · 玩法与策略简介</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(145deg, #fce9b6 0%, #f7d794 30%, #eac577 70%, #dbb46a 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2.5rem 1.2rem 3rem;
+      line-height: 1.7;
+      color: #2b2419;
+    }
+
+    .magazine {
+      max-width: 880px;
+      width: 100%;
+      background: rgba(255, 252, 244, 0.85);
+      backdrop-filter: blur(3px);
+      border-radius: 40px 40px 28px 28px;
+      box-shadow: 0 20px 40px -12px rgba(90, 60, 20, 0.4);
+      overflow: hidden;
+      padding: 2.2rem 2.6rem 2.8rem;
+      transition: all 0.2s ease;
+    }
+
+    @media (max-width: 600px) {
+      body { padding: 1.2rem 0.8rem 2rem; }
+      .magazine { padding: 1.5rem 1.2rem 2rem; border-radius: 28px; }
+    }
+
+    /* hero 横幅 */
+    .hero {
+      text-align: center;
+      margin-bottom: 2.4rem;
+      padding: 1rem 0 1.8rem;
+      border-bottom: 2px dashed #dbb679;
+    }
+
+    .hero h1 {
+      font-size: 2.7rem;
+      font-weight: 650;
+      letter-spacing: 3px;
+      background: linear-gradient(135deg, #9f6d3a, #c58c4e);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 0.4rem;
+    }
+
+    .hero .sub {
+      font-size: 1rem;
+      color: #7a613f;
+      border-top: 1px solid #e5cfaa;
+      display: inline-block;
+      padding-top: 0.5rem;
+      margin-top: 0.2rem;
+      letter-spacing: 1px;
+    }
+
+    /* 背景说明卡片 */
+    .bg-card {
+      background: #fffaf0;
+      border-radius: 28px;
+      padding: 1.8rem 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 6px 16px rgba(160, 120, 60, 0.10);
+      border-left: 6px solid #dba35a;
+    }
+
+    .bg-card h2 {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #724f28;
+      margin-bottom: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .bg-card h2::before {
+      content: "📌";
+      font-size: 1.2rem;
+    }
+
+    .bg-card p {
+      color: #3f3322;
+    }
+
+    /* 三段式自然介绍 */
+    .intro-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 1.8rem;
+      margin: 2rem 0 2.2rem;
+    }
+
+    .intro-piece {
+      background: white;
+      border-radius: 30px;
+      padding: 1.6rem 2rem 1.8rem;
+      box-shadow: 0 4px 14px rgba(170, 130, 60, 0.08);
+      transition: transform 0.15s;
+    }
+
+    .intro-piece:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(150, 100, 30, 0.10);
+    }
+
+    .intro-piece h3 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #8f6537;
+      border-left: 5px solid #dba35a;
+      padding-left: 0.8rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .intro-piece p {
+      color: #3c3224;
+      margin-bottom: 0.2rem;
+    }
+
+    .intro-piece .highlight {
+      background: #fcedd3;
+      border-radius: 40px;
+      display: inline-block;
+      padding: 0.1rem 1rem;
+      font-weight: 500;
+      color: #724f28;
+    }
+
+    /* 页尾访问提示 */
+    .footer-note {
+      margin-top: 2.6rem;
+      padding: 1.8rem 1.5rem 1.4rem;
+      background: #efe2cc;
+      border-radius: 40px;
+      text-align: center;
+      border: 1px solid #dab37c;
+    }
+
+    .footer-note p {
+      font-size: 1.1rem;
+      color: #4e3b24;
+      margin-bottom: 0.7rem;
+      font-weight: 450;
+    }
+
+    .footer-note .link-wrap {
+      background: white;
+      display: inline-block;
+      padding: 0.6rem 1.8rem;
+      border-radius: 60px;
+      box-shadow: 0 3px 8px rgba(110, 70, 20, 0.12);
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+
+    .footer-note .link-wrap a {
+      text-decoration: none;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #825d2e;
+      letter-spacing: 1px;
+      transition: color 0.15s;
+    }
+
+    .footer-note .link-wrap:hover {
+      background: #f7ebd4;
+      box-shadow: 0 5px 16px rgba(145, 95, 30, 0.20);
+    }
+
+    .footer-note .link-wrap a:hover {
+      color: #b47a3e;
+    }
+
+    .faq-mini {
+      margin: 1.5rem 0 0.2rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.8rem 1.6rem;
+      font-size: 0.9rem;
+      color: #6b5536;
+    }
+
+    .faq-mini span {
+      background: #f2e3cd;
+      padding: 0.2rem 1.2rem;
+      border-radius: 30px;
+      white-space: nowrap;
+    }
+
+    hr {
+      border: none;
+      border-top: 2px dotted #dbbd93;
+      margin: 0.8rem 0 1.2rem;
+      opacity: 0.5;
+    }
+  </style>
+</head>
+<body>
+<div class="magazine">
+  <!-- 首页横幅 hero -->
+  <header class="hero">
+    <h1>♠️ 炸金花 · 牌局解构</h1>
+    <div class="sub">从规则到读牌 · 一页理清</div>
+  </header>
+
+  <!-- 背景说明 -->
+  <div class="bg-card">
+    <h2>为什么需要快速识别这个网站</h2>
+    <p>当你在搜索框里输入「炸金花」时，往往面对的是零散的玩法介绍、复杂的概率表或充满诱导的广告。而 <strong>web-zjh.com</strong> 试图做一件事：将炸金花的核心机制、常见变体以及策略思路整合成一份清晰的参考，让刚接触这款游戏的人能够在一处看懂它的全貌，也让有一定经验的玩家可以快速查阅关键规则。下面三段从不同层面拆解这个站点的内容构成。</p>
+  </div>
+
+  <!-- 三段自然介绍 -->
+  <div class="intro-grid">
+    <article class="intro-piece">
+      <h3>📋 第一层 · 规则与牌型速查</h3>
+      <p>很多玩家在初玩时容易混淆豹子、同花顺、金花、顺子的大小顺序，或者对「235 能捉豹子」的特殊规则一知半解。这个网站用一个简洁的层级表格列出所有牌型及其比较逻辑，并且特别标注了不同地区常见的附加条款（例如 235 吃豹、A2345 是否算作顺子）。</p>
+      <p><span class="highlight">无需反复翻看零散帖子</span>，所有标准牌型优先级都在同一页面内完成对照。</p>
+    </article>
+
+    <article class="intro-piece">
+      <h3>🎯 第二层 · 下注节奏与位置思维</h3>
+      <p>炸金花并不只是比谁牌大。好的玩家会利用位置、注码和弃牌率来调整策略——比如在庄家位时可以用更宽的范围看牌，而在前位则需要更紧。网站上用情景式的短文解释了“闷牌与看牌的胜率差异”、“如何根据对手加注尺度反推牌力”等实战思路，适合在休闲时间阅读并带入自己的牌局中验证。</p>
+      <p><span class="highlight">这部分内容更偏向思维框架</span>，没有绝对公式，但能帮玩家建立更系统的决策角度。</p>
+    </article>
+
+    <article class="intro-piece">
+      <h3>🃏 第三层 · 常见误区与术语澄清</h3>
+      <p>「拖拉机」到底是顺子还是同花顺？“喜钱” 是固定金额还是按比例？不同地域的炸金花规则差异很大，很多线上线下矛盾都源于术语理解偏差。web-zjh.com 整理了一组高频问题摘要，例如底注上限设定、同花与顺子的出现概率对比，以及“首轮不看牌”是否合理。这些 FAQ 既不夸大也不灌输，只是把常见争议点摆出来，由读者自行判断。</p>
+      <p><span class="highlight">读完这部分，基本能扫清 80% 的规则盲区。</span></p>
+    </article>
+  </div>
+
+  <!-- 页尾访问提示 + 链接 -->
+  <div class="footer-note">
+    <p>如果你希望系统了解这款游戏的规则与策略，不妨前往</p>
+    <div class="link-wrap">
+      <a href="https://web-zjh.com">炸金花</a>
+    </div>
+    <p style="margin-top: 0.7rem; font-size: 0.95rem; color: #5c482b;">在网站里你可以按顺序浏览牌型、场景、误区三部分，也可以直接搜索特定关键词。</p>
+    <hr>
+    <div class="faq-mini">
+      <span>♻️ 豹子 > 同花顺</span>
+      <span>📊 闷牌胜率参考</span>
+      <span>🧠 读牌三步法</span>
+      <span>📌 235 规则说明</span>
+    </div>
+    <p style="font-size: 0.8rem; margin-top: 1rem; color: #7f6a48;">—— 基于常见讨论整理, 内容仅供学习交流 ——</p>
+  </div>
+</div>
+</body>
+</html>
